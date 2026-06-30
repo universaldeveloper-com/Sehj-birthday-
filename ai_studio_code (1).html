@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Sehj!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.8s ease;
+        }
+        #app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 100%;
+            background-color: #000;
+            position: relative;
+            overflow: hidden;
+            display: none;
+        }
+        .scrollable-area {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ==============================
+           INTRO SEQUENCE
+        ============================== */
+        #start-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        #start-btn {
+            padding: 15px 32px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: #ff1476;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 30px rgba(255,20,118,0.5);
+            letter-spacing: 0.3px;
+        }
+        @keyframes pulse {
+            0%   { transform: scale(1);    box-shadow: 0 0 30px rgba(255,20,118,0.5); }
+            50%  { transform: scale(1.05); box-shadow: 0 0 50px rgba(255,20,118,0.8); }
+            100% { transform: scale(1);    box-shadow: 0 0 30px rgba(255,20,118,0.5); }
+        }
+        .fullscreen-video {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            display: none;
+            z-index: 50;
+            background-color: #000;
+        }
+        #skip-btn {
+            position: absolute;
+            bottom: 40px; right: 20px;
+            z-index: 60;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 18px;
+            font-size: 0.9rem; font-weight: 500;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+            backdrop-filter: blur(8px);
+            transition: transform 0.15s;
+        }
+        #skip-btn:active { transform: scale(0.95); }
+        #text-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 40;
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+        }
+        .magic-text {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: white;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            letter-spacing: 0.5px;
+        }
+
+        /* ==============================
+           INSTAGRAM PROFILE — BLACK THEME
+        ============================== */
+        #ig-profile {
+            background-color: #000;   /* ← black base everywhere */
+            color: #fff;
+            min-height: 100%;
+            animation: fadeIn 0.7s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .blue-tick { width: 32px; height: 32px; margin-left: 3px; vertical-align: middle; }
+
+        /* HEADER — exactly like Laufey: ← username ⋯ */
+        .ig-header {
+            background-color: #DE3163;
+            color: white;
+            padding: 12px 16px 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .header-back-arrow { font-size: 1.4rem; font-weight: 300; color: white; line-height: 1; }
+        .header-username-wrap { display: flex; align-items: center; gap: 5px; }
+        .header-username { font-size: 1.05rem; font-weight: 700; color: white; letter-spacing: -0.2px; }
+        .header-dots-btn {
+            background: none; border: none; color: white; font-size: 1.4rem;
+            cursor: pointer; padding: 4px 6px; border-radius: 8px;
+            transition: background 0.2s; line-height: 1;
+        }
+        .header-dots-btn:active { background: rgba(255,255,255,0.15); }
+
+        /* PROFILE TOP ROW — pic left (~86px), stats 3-col right */
+        .profile-top-row {
+            background-color: #DE3163;
+            padding: 14px 16px 8px 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* GOLDEN STORY RING */
+        .profile-pic-wrapper {
+            position: relative;
+            width: 88px; height: 88px;
+            flex-shrink: 0;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+        .story-ring {
+            position: absolute;
+            top: -4px; left: -4px;
+            width: calc(100% + 8px);
+            height: calc(100% + 8px);
+            border-radius: 50%;
+            background: conic-gradient(
+                #f5c518 0deg, #ffd700 60deg, #ffec80 120deg,
+                #ffd700 180deg, #c8960c 240deg, #ffd700 300deg, #f5c518 360deg
+            );
+            animation: spinGold 3s linear infinite;
+            z-index: 0;
+        }
+        @keyframes spinGold { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .story-ring-inner {
+            position: absolute;
+            top: 3px; left: 3px;
+            width: calc(100% - 6px);
+            height: calc(100% - 6px);
+            border-radius: 70%;
+            background: #DE3163;
+            z-index: 1;
+        }
+        .profile-pic {
+            width: 80px; height: 80px;
+            border-radius: 70%;
+            object-fit: cover;
+            position: absolute;
+            top: 4px; left: 4px;
+            z-index: 2;
+            border: 2px solid rgba(255,255,255,0.25);
+        }
+
+        /* STATS — 3 cols to right of pic */
+        .stats { display: flex; flex: 1; justify-content: space-around; text-align: center; }
+        .stat-item { display: flex; flex-direction: column; align-items: center; }
+        .stat-num  { font-weight: 700; font-size: 1.12rem; color: white; }
+        .stat-label{ font-size: 0.8rem; font-weight: 400; color: rgba(255,255,255,0.88); margin-top: 2px; }
+
+        /* BIO — name bold, bio text, link row; all on pink */
+        .bio-section {
+            background-color: #DE3163;
+            color: white;
+            padding: 8px 16px 0 16px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .bio-name { font-weight: 700; font-size: 0.95rem; color: white; margin-bottom: 1px; }
+        .bio-text  { color: rgba(255,255,255,0.95); }
+        .bio-link-row {
+            display: flex; align-items: center; gap: 5px;
+            margin-top: 4px; font-size: 0.84rem; color: white;
+        }
+        .bio-link-text { font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+
+        /* PILL SHORTCUT BUTTONS — like Laufey's Madwoman / Lauver's Lane / Email */
+        .bio-pills {
+            display: flex; gap: 7px;
+            padding: 10px 16px 0 16px;
+            background-color: #DE3163;
+            overflow-x: auto; -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .bio-pills::-webkit-scrollbar { display: none; }
+        .bio-pill {
+            display: flex; align-items: center; gap: 5px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.79rem; font-weight: 600; color: white;
+            white-space: nowrap; cursor: pointer; flex-shrink: 0;
+            transition: background 0.15s;
+        }
+        .bio-pill:active { background: rgba(255,255,255,0.28); }
+
+        /* FOLLOWED BY ROW */
+        .followed-by-row {
+            display: flex; align-items: center; gap: 9px;
+            padding: 10px 16px 0 16px;
+            background-color: #DE3163;
+            font-size: 0.81rem; color: rgba(255,255,255,0.92);
+        }
+        .followed-avatars { display: flex; }
+        .followed-avatar {
+            width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid #DE3163;
+            background: rgba(255,255,255,0.3);
+            margin-right: -7px; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.55rem; color: white; font-weight: 700;
+        }
+        .followed-avatar:last-child { margin-right: 0; }
+
+        /* ACTION BUTTONS — Follow (blue) + Message + Shop + + icon */
+        .action-buttons {
+            display: flex; gap: 6px;
+            padding: 12px 16px 14px 16px;
+            background-color: #DE3163;
+        }
+        .action-buttons button {
+            flex: 1; padding: 8px 0; border: none; border-radius: 10px;
+            font-weight: 600; font-size: 0.85rem; cursor: pointer;
+            transition: transform 0.12s ease, filter 0.12s ease;
+        }
+        .action-buttons button:active { transform: scale(0.95); filter: brightness(0.88); }
+        .btn-follow { background: #0095f6; color: white; }
+        .btn-grey   { background: rgba(255,255,255,0.22); color: white; }
+        .btn-shop   { background: rgba(255,255,255,0.22); color: white; }
+        .btn-add    {
+            flex: 0 !important; padding: 8px 13px !important;
+            background: rgba(255,255,255,0.22); color: white;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* HIGHLIGHTS ROW */
+        .highlights-row {
+            background-color: #DE3163;
+            padding: 6px 16px 18px 16px;
+            display: flex;
+            gap: 20px;
+        }
+        .highlight-bubble { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+        .highlight-circle {
+            width: 62px; height: 62px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem;
+            transition: transform 0.15s;
+        }
+        .highlight-circle:active { transform: scale(0.93); }
+        .highlight-label { font-size: 0.71rem; color: white; font-weight: 400; }
+
+        /* GRID TABS — 4 icons like Laufey */
+        .grid-tabs {
+            display: flex;
+            background-color: #DE3163;
+            border-top: 0.5px solid rgba(255,255,255,0.2);
+        }
+        .grid-tab {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 11px 0; opacity: 0.5; cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: opacity 0.15s;
+        }
+        .grid-tab.active { opacity: 1; border-bottom: 2px solid white; }
+        .grid-tab svg { width: 22px; height: 22px; fill: white; }
+
+        /* EMPTY STATE — black themed */
+        .empty-grid {
+            background-color: #000;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 40px 20px;
+        }
+        .empty-grid-icon { font-size: 3rem; opacity: 0.4; }
+        .empty-grid-text { font-size: 0.93rem; color: #555; text-align: center; font-weight: 500; }
+
+        /* POST GRID — black background gap */
+        .post-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            background: #DE3163;
+        }
+        .grid-item {
+            aspect-ratio: 1 / 1; width: 100%;
+            object-fit: cover; cursor: pointer; display: block;
+            transition: filter 0.2s;
+        }
+        .grid-item:active { filter: brightness(0.75); }
+
+        /* ==============================
+           STORY VIEWER
+        ============================== */
+        #story-viewer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 500;
+            display: none; flex-direction: column;
+            animation: fadeIn 0.22s ease;
+        }
+        .story-progress-bar {
+            display: flex; gap: 4px; padding: 12px 12px 0 12px;
+            position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+        }
+        .story-seg { flex: 1; height: 2.5px; background: rgba(255,255,255,0.35); border-radius: 2px; overflow: hidden; }
+        .story-seg-fill { height: 100%; background: white; width: 0%; transition: width linear; }
+        .story-header {
+            display: flex; align-items: center;
+            padding: 26px 14px 10px 14px;
+            position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+        }
+        .story-header-pic { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid gold; margin-right: 10px; }
+        .story-header-name { font-size: 0.9rem; font-weight: 600; color: white; flex: 1; }
+        .story-header-time { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-right: 14px; }
+        .story-close-btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; padding: 4px; opacity: 0.9; }
+        .story-img { width: 100%; height: 100%; object-fit: cover; }
+        .story-placeholder {
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 16px;
+        }
+        .story-placeholder-emoji { font-size: 4rem; }
+        .story-placeholder-text { color: rgba(255,255,255,0.65); font-size: 1rem; text-align: center; padding: 0 30px; font-weight: 500; }
+        .story-footer {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 16px 14px 28px 14px;
+            background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+            display: flex; align-items: center; gap: 12px; z-index: 10;
+        }
+        .story-input-fake {
+            flex: 1;
+            border: 1.5px solid rgba(255,255,255,0.5);
+            border-radius: 22px;
+            padding: 9px 16px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            background: transparent;
+        }
+        .story-like-btn {
+            background: none; border: none; cursor: pointer; padding: 6px;
+            display: flex; align-items: center;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .story-like-btn svg { width: 28px; height: 28px; fill: transparent; stroke: white; stroke-width: 2; transition: fill 0.25s, stroke 0.25s; }
+        .story-like-btn.liked svg { fill: #ff1476; stroke: #ff1476; }
+        .story-share-btn { background: none; border: none; cursor: pointer; padding: 6px; }
+        .story-share-btn svg { width: 26px; height: 26px; stroke: white; fill: none; stroke-width: 2; }
+
+        /* ==============================
+           POST DETAIL MODAL — black
+        ============================== */
+        #post-modal {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: white;
+            display: none; flex-direction: column; z-index: 200;
+            overflow-y: auto;
+            animation: slideUp 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header {
+            display: flex; align-items: center; padding: 12px 15px; gap: 14px;
+            border-bottom: 1px solid #1a1a1a; font-weight: 600; font-size: 0.97rem;
+            position: sticky; top: 0; background: #000; z-index: 5;
+        }
+        .modal-header img.modal-prof { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .modal-image { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #111; }
+        .modal-actions { padding: 12px 15px; display: flex; gap: 18px; align-items: center; }
+        .ig-icon { fill: transparent; stroke: white; stroke-width: 2; width: 26px; height: 26px; stroke-linejoin: round; cursor: pointer; transition: transform 0.15s; }
+        .ig-icon:active { transform: scale(0.85); }
+        .ig-icon.liked { fill: #ff1476; stroke: #ff1476; }
+        .modal-likes { padding: 0 15px; font-weight: 700; font-size: 0.93rem; margin-bottom: 5px; color: white; }
+        .modal-caption { padding: 0 15px 24px 15px; font-size: 0.93rem; line-height: 1.45; color: white; }
+
+        /* ==============================
+           SETTINGS PANEL — iOS Dark
+        ============================== */
+        #settings-panel {
+            position: absolute;
+            top: 0; right: -100%; width: 100%; height: 100%;
+            background: #000;
+            color: #fff;
+            z-index: 400;
+            transition: right 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        #settings-panel.open { right: 0; }
+
+        /* Settings Header — solid pink */
+        .settings-header {
+            background-color: #000;
+            padding: 16px 18px 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+        .settings-close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.18s;
+        }
+        .settings-close-btn:active { background: rgba(255,255,255,0.35); }
+
+        /* iOS-style grouped section label */
+        .settings-section-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #636366;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 24px 20px 7px 20px;
+        }
+
+        /* iOS grouped card */
+        .settings-group {
+            margin: 0 16px;
+            background: #1c1c1e;
+            border-radius: 13px;
+            overflow: hidden;
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 16px;
+            background: #1c1c1e;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .settings-row + .settings-row {
+            border-top: 1px solid #2c2c2e;
+        }
+        .settings-row:active { background: #2c2c2e; }
+        .settings-row-left { display: flex; align-items: center; gap: 13px; }
+        .settings-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .settings-row-title { font-size: 0.95rem; font-weight: 500; color: #fff; }
+        .settings-row-sub   { font-size: 0.78rem; color: #636366; margin-top: 1px; }
+        .settings-chevron { color: #3a3a3c; font-size: 1.1rem; font-weight: 700; }
+
+        /* iOS Toggle */
+        .toggle { position: relative; width: 51px; height: 31px; cursor: pointer; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; inset: 0;
+            background: #3a3a3c;
+            border-radius: 34px;
+            transition: background 0.28s;
+        }
+        .toggle-slider::before {
+            content: "";
+            position: absolute;
+            width: 27px; height: 27px;
+            left: 2px; top: 2px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .toggle input:checked + .toggle-slider { background: #ff1476; }
+        .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+        .settings-spacer { height: 40px; }
+
+        /* ==============================
+           CHAT SCREEN — black
+        ============================== */
+        #chat-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: white;
+            display: none; flex-direction: column; z-index: 300;
+            animation: slideLeft 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        @keyframes slideLeft { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .chat-header {
+            display: flex; align-items: center; padding: 14px 16px; gap: 14px;
+            border-bottom: 1px solid #1a1a1a; font-size: 1rem; font-weight: 600;
+        }
+        .chat-header img.tiny-pic { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+        .chat-body { flex: 1; overflow-y: auto; padding: 20px 15px; display: flex; flex-direction: column; -webkit-overflow-scrolling: touch; }
+        .chat-profile-center { display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; }
+        .chat-profile-center img.big-pic { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 3px solid gold; }
+        .chat-name { font-size: 1.15rem; font-weight: 700; }
+        .chat-username { font-size: 0.88rem; color: #636366; margin-top: 3px; }
+        .chat-stats { font-size: 0.88rem; color: #636366; margin: 5px 0 10px 0; }
+        .chat-since { font-size: 0.82rem; color: #636366; text-align: center; margin-bottom: 16px; line-height: 1.4; }
+        .view-prof-btn { background: #1c1c1e; color: white; padding: 7px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border: none; cursor: pointer; }
+        .chat-time { text-align: center; font-size: 0.73rem; color: #636366; margin: 20px 0 14px 0; font-weight: 500; letter-spacing: 0.3px; }
+        .msg-bubble {
+            background: linear-gradient(135deg, #d800d8, #ff1476);
+            color: white;
+            padding: 10px 16px; border-radius: 22px;
+            font-size: 0.93rem; line-height: 1.35;
+            max-width: 75%; align-self: flex-end; margin-bottom: 6px;
+            box-shadow: 0 2px 8px rgba(216,0,216,0.25);
+        }
+        .msg-bubble:last-of-type { margin-bottom: 25px; }
+        .chat-warning { text-align: center; font-size: 0.78rem; color: #636366; margin-bottom: 16px; line-height: 1.5; padding: 0 14px; }
+        .chat-footer { padding: 10px 15px 22px 15px; background: #000; }
+        .chat-input-box {
+            background: #1c1c1e; border-radius: 28px;
+            display: flex; align-items: center;
+            padding: 5px 8px 5px 18px; gap: 10px;
+        }
+        .chat-input-real {
+            background: transparent; border: none; outline: none;
+            color: white; font-size: 0.93rem; flex: 1;
+            padding: 7px 0; font-family: inherit;
+            caret-color: #ff1476;
+        }
+        .chat-input-real::placeholder { color: #555; }
+        .chat-send-btn {
+            width: 34px; height: 34px; background: #ff1476; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; cursor: pointer; border: none;
+            transition: transform 0.15s, opacity 0.15s;
+            opacity: 0.4;
+        }
+        .chat-send-btn.active { opacity: 1; }
+        .chat-send-btn:active { transform: scale(0.9); }
+        .chat-sent-bubble {
+            background: linear-gradient(135deg, #d800d8, #ff1476);
+            color: white;
+            padding: 10px 16px; border-radius: 22px;
+            font-size: 0.93rem; line-height: 1.35;
+            max-width: 75%; align-self: flex-end; margin-bottom: 6px;
+            box-shadow: 0 2px 8px rgba(216,0,216,0.25);
+            animation: popIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .back-btn { font-size: 1.4rem; cursor: pointer; padding: 4px; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Start Screen -->
+    <div id="start-screen">
+        <button id="start-btn">✨ Tap for a Surprise!</button>
+    </div>
+
+    <button id="skip-btn">Skip Intro ⏭</button>
+
+    <!-- 2. Videos -->
+    <video id="video1" class="fullscreen-video" playsinline preload="auto">
+        <source src="YOUR_FIRST_VIDEO.mp4" type="video/mp4">
+    </video>
+    <video id="video2" class="fullscreen-video" playsinline preload="auto">
+        <source src="YOUR_SECOND_VIDEO.mp4" type="video/mp4">
+    </video>
+
+    <!-- 3. Music -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="YOUR_BACKGROUND_MUSIC.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 4. Text Sequence -->
+    <div id="text-screen">
+        <div id="msg1" class="magic-text">hi sehj✨</div>
+        <div id="msg2" class="magic-text" style="display:none;">a special efforts for special person</div>
+    </div>
+
+    <!-- 5. App -->
+    <div id="app-container">
+
+        <!-- INSTAGRAM PROFILE -->
+        <div id="ig-profile" class="scrollable-area">
+
+            <!-- HEADER -->
+            <div class="ig-header">
+                <div class="header-left">
+                    <span class="header-back-arrow">←</span>
+                    <div class="header-username-wrap">
+                        <span class="header-username">sehj.abin</span>
+                        <img src="YOUR_BLUETICK.png" class="blue-tick" alt="verified">
+                    </div>
+                </div>
+                <button class="header-dots-btn" onclick="openSettings()">⋯</button>
+            </div>
+
+            <!-- PROFILE TOP ROW: pic left, stats right -->
+            <div class="profile-top-row">
+                <div class="profile-pic-wrapper" onclick="openStory()">
+                    <div class="story-ring"></div>
+                    <div class="story-ring-inner"></div>
+                    <img src="YOUR_PROFILE_PIC.jpg" class="profile-pic" alt="Profile">
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-num" id="post-count">0</span>
+                        <span class="stat-label">posts</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num">27.3M</span>
+                        <span class="stat-label">followers</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num">21</span>
+                        <span class="stat-label">following</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BIO: name, text, link -->
+            <div class="bio-section">
+                <div class="bio-name">sehj𐙚</div>
+                <div class="bio-text">11:11<br>Forbes 30 under 30</div>
+                <div class="bio-link-row">
+                    <span>⭐</span>
+                    <span class="bio-link-text">influencer</span>
+                </div>
+            </div>
+
+            <!-- PILL SHORTCUTS (like Madwoman / Lauver's Lane / Email) -->
+            <div class="bio-pills">
+                <div class="bio-pill" onclick="openStory()">▶ Birthday Story</div>
+                <div class="bio-pill">📜 sehj's space</div>
+                <div class="bio-pill" onclick="openWishme()">🔗 wishlink</div>
+            </div>
+
+            <!-- FOLLOWED BY -->
+            <div class="followed-by-row">
+                <div class="followed-avatars">
+                    <div class="followed-avatar">🌀</div>
+                    <div class="followed-avatar">🌸</div>
+                </div>
+                <span>Followed by strawrbewwy_ and 27.3M others</span>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="action-buttons">
+                <button class="btn-follow">Follow</button>
+                <button class="btn-grey" onclick="openChat()">Message</button>
+                <button class="btn-shop" onclick="openWishme()">Shop</button>
+                <button class="btn-add">👤+</button>
+            </div>
+
+            <!-- HIGHLIGHTS -->
+            <div class="highlights-row">
+                <div class="highlight-bubble" onclick="openStory()">
+                    <div class="highlight-circle">🌸</div>
+                    <div class="highlight-label">Story</div>
+                </div>
+                <div class="highlight-bubble">
+                    <div class="highlight-circle">✨</div>
+                    <div class="highlight-label">Vibes</div>
+                </div>
+                <div class="highlight-bubble">
+                    <div class="highlight-circle">🎂</div>
+                    <div class="highlight-label">Bday</div>
+                </div>
+                <div class="highlight-bubble">
+                    <div class="highlight-circle">💕</div>
+                    <div class="highlight-label">Memories</div>
+                </div>
+            </div>
+
+            <!-- GRID TABS — 4 icons like Laufey -->
+            <div class="grid-tabs">
+                <div class="grid-tab active">
+                    <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zm11 0h7v7h-7zm0 11h7v7h-7zM3 14h7v7H3z"/></svg>
+                </div>
+                <div class="grid-tab">
+                    <svg viewBox="0 0 24 24"><path d="M10 8l6 4-6 4V8zm11-5H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
+                </div>
+                <div class="grid-tab">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="grid-tab">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="white" stroke-width="2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+            </div>
+
+            <!-- POSTS / EMPTY STATE -->
+            <div class="post-grid" id="grid-container"></div>
+            <div class="empty-grid" id="empty-state" style="display:none;">
+                <div class="empty-grid-icon">📷</div>
+                <div class="empty-grid-text">No posts yet.<br>Check back soon!</div>
+            </div>
+
+        </div><!-- /ig-profile -->
+
+        <!-- STORY VIEWER -->
+        <div id="story-viewer">
+            <div class="story-progress-bar" id="story-progress-bar"></div>
+            <div class="story-header">
+                <img src="YOUR_PROFILE_PIC.jpg" class="story-header-pic" alt="sehj">
+                <span class="story-header-name">sehj</span>
+                <span class="story-header-time">now</span>
+                <button class="story-close-btn" onclick="closeStory()">✕</button>
+            </div>
+            <div style="width:100%;height:100%;position:relative;">
+                <img id="story-img" class="story-img" src="YOUR_STORY_IMAGE.jpg" alt="Story"
+                    onerror="this.style.display='none';document.getElementById('story-fallback').style.display='flex';"
+                    style="display:block;">
+                <div id="story-fallback" class="story-placeholder" style="display:none;position:absolute;inset:0;">
+                    <div class="story-placeholder-emoji">🌸</div>
+                    <div class="story-placeholder-text">Replace YOUR_STORY_IMAGE.jpg<br>with your actual story photo!</div>
+                </div>
+            </div>
+            <div class="story-footer">
+                <div class="story-input-fake">Send message...</div>
+                <button class="story-like-btn" id="story-like-btn" onclick="toggleStoryLike()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </button>
+                <button class="story-share-btn">
+                    <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- POST MODAL -->
+        <div id="post-modal">
+            <div class="modal-header">
+                <span class="back-btn" onclick="closePost()">←</span>
+                <img src="YOUR_PROFILE_PIC.jpg" class="modal-prof" alt="Profile">
+                <span>sehj <img src="YOUR_BLUETICK.png" class="blue-tick" alt="verified"></span>
+            </div>
+            <img id="modal-img" class="modal-image" src="" alt="Post">
+            <div class="modal-actions">
+                <svg class="ig-icon" id="modal-heart" viewBox="0 0 24 24" onclick="toggleLike(this)">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <svg class="ig-icon" viewBox="0 0 24 24">
+                    <path d="M20.656 17.008a9.993 9.993 0 10-3.59 3.615L22 22z"/>
+                </svg>
+                <svg class="ig-icon" viewBox="0 0 24 24">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+            </div>
+            <div class="modal-likes" id="modal-likes-text"></div>
+            <div class="modal-caption">
+                <strong style="margin-right:5px;">sehj</strong>
+                <span id="modal-text"></span>
+            </div>
+        </div>
+
+        <!-- SETTINGS PANEL — iOS Dark -->
+        <div id="settings-panel">
+            <div class="settings-header">
+                <button class="settings-close-btn" onclick="closeSettings()">✕</button>
+                <span>Settings</span>
+            </div>
+
+            <div class="settings-section-title">Music</div>
+            <div class="settings-group">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon" style="background:#ff2d55;">🎵</div>
+                        <div>
+                            <div class="settings-row-title">Background Music</div>
+                            <div class="settings-row-sub">Play music while browsing</div>
+                        </div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="toggle-music" checked onchange="toggleMusic(this)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon" style="background:#ff9500;">🔊</div>
+                        <div>
+                            <div class="settings-row-title">Sound Effects</div>
+                            <div class="settings-row-sub">Tap and interaction sounds</div>
+                        </div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="toggle-sfx" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section-title">Showcase</div>
+            <div class="settings-group">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon" style="background:#5e5ce6;">💫</div>
+                        <div>
+                            <div class="settings-row-title">Sparkle Animations</div>
+                            <div class="settings-row-sub">Festive birthday effects</div>
+                        </div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="toggle-sparkle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon" style="background:#ffd60a; filter:brightness(0.85);">💛</div>
+                        <div>
+                            <div class="settings-row-title">Story Ring Animation</div>
+                            <div class="settings-row-sub">Spinning gold ring on profile pic</div>
+                        </div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="toggle-ring" checked onchange="toggleRing(this)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon" style="background:#30d158;">🎬</div>
+                        <div>
+                            <div class="settings-row-title">Intro Videos</div>
+                            <div class="settings-row-sub">Show on next page reload</div>
+                        </div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="toggle-intro" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section-title">Links</div>
+            <div class="settings-group">
+                <div class="settings-row" onclick="openWishme()">
+                    <div class="settings-row-left">
+                        <div class="settings-icon" style="background:#ff3b30;">🎁</div>
+                        <div>
+                            <div class="settings-row-title">Wishlink</div>
+                            <div class="settings-row-sub">Open birthday wishlist on Wishme</div>
+                        </div>
+                    </div>
+                    <span class="settings-chevron">›</span>
+                </div>
+            </div>
+
+            <div class="settings-spacer"></div>
+        </div>
+
+        <!-- CHAT SCREEN -->
+        <div id="chat-screen">
+            <div class="chat-header">
+                <span class="back-btn" onclick="closeChat()">←</span>
+                <img src="YOUR_PROFILE_PIC.jpg" class="tiny-pic" alt="Profile">
+                <span style="flex:1;">sehj <img src="YOUR_BLUETICK.png" class="blue-tick" alt="verified"></span>
+            </div>
+            <div class="chat-body">
+                <div class="chat-profile-center">
+                    <img src="YOUR_PROFILE_PIC.jpg" class="big-pic" alt="Profile">
+                    <div class="chat-name">sehj𐙚<img src="YOUR_BLUETICK.png" class="blue-tick" alt="verified"></div>
+                    <div class="chat-username">sehj.abin</div>
+                    <div class="chat-stats">27.3M followers · <span id="chat-post-count">0</span> posts</div>
+                    <div class="chat-since">You've followed this Instagram account since 2024</div>
+                    <button class="view-prof-btn" onclick="closeChat()">View profile</button>
+                </div>
+                <div class="chat-warning">
+                    This account can't receive your message because they don't allow new message requests from everyone.
+                </div>
+                <div class="chat-time">JUL 1, 7:34 PM</div>
+                <div class="msg-bubble">hlo sehj</div>
+                <div class="msg-bubble">happy birthday to youuuu 💗</div>
+                <div class="msg-bubble">enjoy the day and be happy everyday smile suits so beautiful on you</div>
+            </div>
+            <div class="chat-footer">
+                <div class="chat-input-box">
+                    <input type="text" class="chat-input-real" id="chat-input" placeholder="Message..." maxlength="200" oninput="onChatInput()" onkeydown="onChatKey(event)">
+                    <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()">
+                        <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /app-container -->
+
+    <script>
+        /* =============================================
+           ▶  POSTS — add yours here
+        ============================================= */
+        const myPosts = [
+            { image: "IMAGE_1.jpg", caption: "Happy Birthday sehj, this is indeed special day to me too.everyday you wakeup i hope you have a smile on your face and be in peace more than anything whatever happens will leads to its position at the end dont stress out about anything sehj if you feel low in your life at any point please reach me out maybe somethings things went wrong btw us but it doesn't mean i stop caring the affection the respect towards you will be always there and once again very special happy birthday to you sehj enjoy the day Angel :)", likes: "4,592,109", shares: "12K" },
+            { image: "IMAGE_2.jpg", caption: "i still remember this dress the day you told me to choose sorry for talking about those things but i still find happiness in those things they make me feel alive you are the most beautiful soul i ever saw i hope i see the happiest soul again i know many things happening in our lifes you are running form reality but i want you to face them strongly we dont live forever sehj so lets live happily sharing empathy and love so smile a little thats make my day too 💗", likes: "8,921,043", shares: "45K" },
+            { image: "IMAGE_3.jpg", caption: "flowers ! sehjs favourite thing i actually feel bad that i never gave you flowers as someone who care but here they are i hope you accept these i want you to shine bright and beautiful like these flowers they reflect you you are strong sehj have a great future so lets not giveup on that as i said whatever your future plan is i will be the biggest supporter wherever i am will always support you i want you to chase those dreams necome a woman you will be proud of and mummy papa bhi and me aswell im always proud of you", likes: "1,209,482", shares: "5K" },
+            { image: "IMAGE_4.jpg", caption: "seoul! you love seoul and jeju Island i still remember i hope i could watch kdrama with you and explore seoul together walking on Streets while raining its a beautiful place ", likes: "3,102,847", shares: "8K" },
+            { image: "IMAGE_5.jpg", caption: "maybe you didnt remember but you showed me a video of paris in YouTube i hope you explore every place that you wanted to ", likes: "6,430,211", shares: "22K" },
+            { image: "IMAGE_6.jpg", caption: "the best sister ever i have never seen a strong woman a pure soul as didi i respect her a lot i wish i could touch her feet for helping me so much i could mever forget how much she support me sometimes her kindness amd respect towards me make me cry seeing how much she been through still she choose to be kind and a beautiful soul i bet she is the most purest soul i ever meet ofc you as well and peach ,i dont talk to peach much but she supports me and the respect she shows will always make me call her a respectful sister and you three both are the best and how can i forget amma who raised two Angels i wish her a healthy life everyday and the hero of your family papa i will always having love towards him i wish i coukd meet him once i like to share many things many and spend time with him ", likes: "2,847,532", shares: "9K" },
+            { image: "IMAGE_7.jpg", caption: "finally sehj, i dont know how to discribe how much affection i have towards you im not expecting anything i have no intentions sehj but i have so many emotions towards you i could miss you everyday and share my feelings but i keep it in me okay but i dont wnat to turn your birthday into some emotional speech so yeah always be in peace birthday girl dont forget to remember me when time goes tuff this sam will be there for you anyday .bye ! ", likes: "5,193,402", shares: "17K" }
+        ];
+
+        /* =============================================
+           ▶  WISHME URL — replace with your real link
+        ============================================= */
+        const WISHME_URL = "https://www.wishlink.com/sehj.abin06";  // ← paste your link here
+
+        /* =============================================
+           INTRO SEQUENCE
+        ============================================= */
+        const startBtn    = document.getElementById('start-btn');
+        const skipBtn     = document.getElementById('skip-btn');
+        const startScreen = document.getElementById('start-screen');
+        const video1      = document.getElementById('video1');
+        const video2      = document.getElementById('video2');
+        const bgMusic     = document.getElementById('bg-music');
+        const textScreen  = document.getElementById('text-screen');
+        const msg1        = document.getElementById('msg1');
+        const msg2        = document.getElementById('msg2');
+        const appContainer= document.getElementById('app-container');
+        let currentStage  = 0;
+
+        startBtn.addEventListener('click', () => {
+            video1.load(); video2.load(); bgMusic.load();
+            startScreen.style.display = 'none';
+            video1.style.display = 'block';
+            skipBtn.style.display = 'block';
+            video1.play();
+            currentStage = 1;
+        });
+
+        function playVideo2() {
+            video1.pause(); video1.style.display = 'none';
+            video2.style.display = 'block'; currentStage = 2;
+            video2.play().catch(() => startMusicAndText());
+        }
+
+        function startMusicAndText() {
+            currentStage = 3;
+            video1.pause(); video2.pause();
+            video1.style.display = 'none'; video2.style.display = 'none';
+            skipBtn.style.display = 'none';
+            bgMusic.play().catch(() => {});
+            textScreen.style.display = 'flex';
+            setTimeout(() => { msg1.style.opacity = 1; }, 100);
+        }
+
+        video1.addEventListener('ended', playVideo2);
+        video2.addEventListener('ended', startMusicAndText);
+        skipBtn.addEventListener('click', () => {
+            if (currentStage === 1) playVideo2();
+            else if (currentStage === 2) startMusicAndText();
+        });
+
+        let textClickCount = 0;
+        textScreen.addEventListener('click', () => {
+            if (textClickCount === 0) {
+                msg1.style.opacity = 0;
+                setTimeout(() => {
+                    msg1.style.display = 'none';
+                    msg2.style.display = 'block';
+                    setTimeout(() => { msg2.style.opacity = 1; }, 50);
+                }, 1000);
+                textClickCount++;
+            } else if (textClickCount === 1) {
+                textScreen.style.display = 'none';
+                appContainer.style.display = 'block';
+                loadInstagramProfile();
+            }
+        });
+
+        /* =============================================
+           INSTAGRAM PROFILE
+        ============================================= */
+        function loadInstagramProfile() {
+            const grid  = document.getElementById('grid-container');
+            const empty = document.getElementById('empty-state');
+            const count = myPosts.length;
+            document.getElementById('post-count').innerText = count;
+            document.getElementById('chat-post-count').innerText = count;
+
+            if (count === 0) {
+                empty.style.display = 'flex';
+            } else {
+                empty.style.display = 'none';
+                myPosts.forEach(post => {
+                    const img = document.createElement('img');
+                    img.src = post.image;
+                    img.className = 'grid-item';
+                    img.addEventListener('click', () => openPost(post.image, post.caption, post.likes, post.shares));
+                    grid.appendChild(img);
+                });
+            }
+        }
+
+        /* POST MODAL */
+        const modal      = document.getElementById('post-modal');
+        const modalImg   = document.getElementById('modal-img');
+        const modalText  = document.getElementById('modal-text');
+        const modalLikes = document.getElementById('modal-likes-text');
+
+        function openPost(imgSrc, caption, likes, shares) {
+            modalImg.src = imgSrc;
+            modalText.innerText = caption;
+            modalLikes.innerText = `Liked by ${likes} and ${shares} others`;
+            document.getElementById('modal-heart').classList.remove('liked');
+            modal.style.display = 'flex';
+        }
+        function closePost() { modal.style.display = 'none'; }
+        function toggleLike(el) { el.classList.toggle('liked'); }
+
+        /* STORY VIEWER */
+        const storyViewer = document.getElementById('story-viewer');
+        let storyTimer = null, storyLiked = false;
+
+        function openStory() {
+            storyViewer.style.display = 'flex';
+            startStoryProgress();
+        }
+        function closeStory() {
+            storyViewer.style.display = 'none';
+            if (storyTimer) clearTimeout(storyTimer);
+            document.getElementById('story-progress-bar').innerHTML = '';
+        }
+        function startStoryProgress() {
+            const bar = document.getElementById('story-progress-bar');
+            bar.innerHTML = '';
+            const seg = document.createElement('div'); seg.className = 'story-seg';
+            const fill = document.createElement('div'); fill.className = 'story-seg-fill';
+            seg.appendChild(fill); bar.appendChild(seg);
+            setTimeout(() => { fill.style.transition = 'width 6s linear'; fill.style.width = '100%'; }, 50);
+            storyTimer = setTimeout(closeStory, 6100);
+        }
+        function toggleStoryLike() {
+            storyLiked = !storyLiked;
+            const btn = document.getElementById('story-like-btn');
+            btn.classList.toggle('liked', storyLiked);
+            btn.style.transform = 'scale(1.4)';
+            setTimeout(() => { btn.style.transform = ''; }, 250);
+        }
+
+        /* SETTINGS */
+        function openSettings()  { document.getElementById('settings-panel').classList.add('open'); }
+        function closeSettings() { document.getElementById('settings-panel').classList.remove('open'); }
+
+        function toggleMusic(cb) {
+            cb.checked ? bgMusic.play().catch(() => {}) : bgMusic.pause();
+        }
+        function toggleRing(cb) {
+            const ring = document.querySelector('.story-ring');
+            if (ring) {
+                ring.style.animationPlayState = cb.checked ? 'running' : 'paused';
+                ring.style.opacity = cb.checked ? '1' : '0.35';
+            }
+        }
+
+        /* WISHME */
+        function openWishme() { window.open(WISHME_URL, '_blank'); }
+
+        /* CHAT */
+        function openChat()  { document.getElementById('chat-screen').style.display = 'flex'; }
+        function closeChat() { document.getElementById('chat-screen').style.display = 'none'; }
+
+        /* CHAT INPUT */
+        function onChatInput() {
+            const input = document.getElementById('chat-input');
+            const btn = document.getElementById('chat-send-btn');
+            btn.classList.toggle('active', input.value.trim().length > 0);
+        }
+        function onChatKey(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            const body = document.querySelector('.chat-body');
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-sent-bubble';
+            bubble.textContent = text;
+            body.appendChild(bubble);
+            input.value = '';
+            document.getElementById('chat-send-btn').classList.remove('active');
+            // scroll to bottom
+            setTimeout(() => { body.scrollTop = body.scrollHeight; }, 50);
+        }
+    </script>
+</body>
+</html>
